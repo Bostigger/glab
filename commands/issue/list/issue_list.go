@@ -80,11 +80,15 @@ func NewCmdList(f *cmdutils.Factory) *cobra.Command {
 				listType = "search"
 			}
 
-			if lb, _ := cmd.Flags().GetBool("mine"); lb {
-				u, _ := api.CurrentUser(nil)
-				opts.AssigneeUsername = gitlab.String(u.Username)
-				listType = "search"
-			}
+			if lb, _ := cmd.Flags().GetBool("mine"); lb { 
+				u, err := api.CurrentUser(nil)
+				if err != nil {
+				     return err
+				}	
+				opts.AssigneeUsername = gitlab.String(u.Username) 
+				listType = "search" 
+ 			}
+			
 			issues, err := api.ListIssues(apiClient, repo.FullName(), opts)
 			if err != nil {
 				return err
